@@ -1,0 +1,45 @@
+---
+- name: Install build packages
+  apt:
+    name: "{{ packages }}"
+  vars:
+    packages:
+      - make
+      - build-essential
+      - libssl-dev
+      - zlib1g-dev
+      - libbz2-dev
+      - libreadline-dev
+      - libsqlite3-dev
+      - llvm
+      - libncurses5-dev
+      - libncursesw5-dev
+      - xz-utils
+      - tk-dev
+      - libffi-dev
+      - liblzma-dev
+      - python-openssl
+
+- name: Install pyenv
+  git:
+    repo: "git://github.com/pyenv/pyenv.git"
+    dest: /opt/pyenv
+
+- name: Configure pyenv
+  copy:
+    src: pyenv.sh
+    dest: /etc/profile.d/pyenv.sh
+
+- name: Load profile
+  shell: /bin/bash /etc/profile.d/pyenv.sh
+  changed_when: False
+
+- name: Check installed python
+  shell: /bin/bash -lc "pyenv versions | grep {{ python.version }}"
+  register: pyenv_version
+  ignore_errors: yes
+  changed_when: False
+
+- name: "Install python {{ python.version }}"
+  command: /bin/bash -lc 'pyenv install {{ python.version }}'
+  when: pyenv_version is failed
