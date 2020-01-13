@@ -1,1 +1,16 @@
 - name: Checkout code
+  git:
+    repo: "https://github.com/shimaaaa/django-ansible.git"
+    dest: app.install_directory
+- name: Add poetry
+  shell: /opt/pyenv/shims/pip install poetry
+  args:
+    chdir: app.install_directory
+- name: Set poetry config
+  shell: /opt/pyenv/shims/poetry config virtualenvs.in-project true
+  args:
+    chdir: app.install_directory
+- name: Poetry install
+  shell: /opt/pyenv/shims/poetry install
+  args:
+    chdir: app.install_directory
