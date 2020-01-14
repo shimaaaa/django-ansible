@@ -1,4 +1,4 @@
 python:
   version: "3.6.9"
 app:
-  install_directory: /usr/local/src/django-ansible
+  install_directory: "~/project/django-ansible"

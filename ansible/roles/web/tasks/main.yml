@@ -1,12 +1,15 @@
 - name: Add nginx user
+  become: yes
   user:
     name: nginx
 
 - name: Install nginx
+  become: yes
   apt:
     name: nginx
 
 - name: Nginx service restart
+  become: yes
   service:
     name: nginx
     enabled: yes

@@ -1,6 +1,5 @@
 - name: webservers
   hosts: webservers
-  become: yes
   roles:
     - common
     - python

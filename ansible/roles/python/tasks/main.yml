@@ -1,5 +1,6 @@
 ---
 - name: Install build packages
+  become: yes
   apt:
     name: "{{ packages }}"
   vars:
@@ -20,26 +21,31 @@
       - liblzma-dev
       - python-openssl
 
+- name: Check pyenv installed
+  stat:
+    path: ~/.pyenv
+  register: pyenv_check_result
+
 - name: Install pyenv
-  git:
-    repo: "git://github.com/pyenv/pyenv.git"
-    dest: /opt/pyenv
+  shell: /bin/bash -lc "curl -L https://github.com/pyenv/pyenv-installer/raw/master/bin/pyenv-installer | bash"
+  when: not pyenv_check_result.stat.exists
+  register: pyenv_install_result
 
-- name: Configure pyenv
-  copy:
-    src: pyenv.sh
-    dest: /etc/profile.d/pyenv.sh
-
-- name: Load profile
-  shell: /bin/bash /etc/profile.d/pyenv.sh
-  changed_when: False
+- name: Add pyenv settings to .bashrc
+  when: pyenv_check_result is not skipped
+  blockinfile:
+    path: ~/.bashrc
+    block: |
+      export PATH="$HOME/.pyenv/bin:$PATH"
+      eval "$(pyenv init -)"
+      eval "$(pyenv virtualenv-init -)"
 
 - name: Check installed python
-  shell: /bin/bash -lc "pyenv versions | grep {{ python.version }}"
+  shell: /bin/bash -lc "~/.pyenv/bin/pyenv versions | grep {{ python.version }}"
   register: pyenv_version
   ignore_errors: yes
   changed_when: False
 
 - name: "Install python {{ python.version }}"
-  command: /bin/bash -lc 'pyenv install {{ python.version }}'
+  command: /bin/bash -lc '~/.pyenv/bin/pyenv install {{ python.version }}'
   when: pyenv_version is failed
