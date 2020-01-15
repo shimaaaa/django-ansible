@@ -5,7 +5,7 @@ After=syslog.target
 [Service]
 User=vagrant
 WorkingDirectory=/home/vagrant/project/django-ansible/djtest
-ExecStart=/home/vagrant/.pyenv/shims/uwsgi --ini /home/vagrant/project/django-ansible/uwsgi.ini
+ExecStart=/home/vagrant/.pyenv/shims/poetry run uwsgi --ini /home/vagrant/project/django-ansible/uwsgi.ini
 # Requires systemd version 211 or newer
 Environment=PYENV_VERSION=3.6.9
 Restart=always

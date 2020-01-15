@@ -24,3 +24,16 @@
     src: ../files/djtest.uwsgi.service
     dest: /etc/systemd/system/
   become: yes
+
+- name: Systemd daemon-reload
+  command: systemctl daemon-reload
+  become: yes
+
+- name: Enable uwsgi
+  command: systemctl enable djtest.uwsgi.service
+  become: yes
+
+- name: Restart uWSGI
+  service: name=djtest.uwsgi.service
+    state=restarted
+  become: yes
