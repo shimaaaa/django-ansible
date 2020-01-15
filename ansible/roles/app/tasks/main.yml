@@ -12,8 +12,15 @@
   shell: ~/.pyenv/shims/poetry config virtualenvs.in-project true
   args:
     chdir: "{{ app.install_directory }}"
+  changed_when: False
 
 - name: Poetry install
   shell: ~/.pyenv/shims/poetry install
   args:
     chdir: "{{ app.install_directory }}"
+
+- name: Copy uwsgi service
+  copy:
+    src: ../files/djtest.uwsgi.service
+    dest: /etc/systemd/system/
+  become: yes
